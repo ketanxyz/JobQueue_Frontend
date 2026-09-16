@@ -1,44 +1,127 @@
-# Job Queue Dashboard (Frontend)
+# Job Queue Manager Frontend
 
-A React dashboard for the [Job Queue Management Backend](../backend). Lists jobs, filters by status, creates new jobs, moves jobs through their status lifecycle, and deletes them.
+The frontend for the Job Queue Manager. It provides a dashboard for viewing,
+filtering, creating, updating, and deleting jobs through the NestJS API in
+[`../backend`](../backend).
+
+## Features
+
+- View all jobs with their type, status, and creation time
+- Filter jobs by status with live counts
+- Create jobs with client-side validation
+- Move jobs through the supported status lifecycle
+- Delete jobs with inline confirmation
+- Show loading, empty, error, and success states
+- Display API errors as user-facing notifications
 
 ## Tech Stack
 
-- React 18 + Vite
+- React 18
+- Vite
 - React Router
 - Tailwind CSS
-- No extra state library — a couple of small hooks (`useJobs`, `useToasts`) are enough for this scope
+- Native `fetch` for API requests
+
+## Requirements
+
+- Node.js 20 or later
+- npm
+- The backend running locally or deployed
+
+## Local Setup
+
+From this directory, install dependencies:
+
+```bash
+npm install
+```
+
+Create a `.env` file in the frontend directory:
+
+```dotenv
+VITE_API_BASE_URL=http://localhost:3000
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Open <http://localhost:5173> in a browser. Start the backend separately from
+the `backend` directory with `npm run start:dev`.
+
+## Environment Variables
+
+Vite exposes only variables prefixed with `VITE_` to browser code.
+
+| Variable | Required | Description |
+| --- | --- | --- |
+| `VITE_API_BASE_URL` | No | Base URL of the backend API. Defaults to `http://localhost:3000`. |
+
+For a deployed frontend, set this variable in the hosting provider's build
+environment. For example:
+
+```dotenv
+VITE_API_BASE_URL=https://jobqueue-backend.onrender.com
+```
+
+After changing a `VITE_` variable, rebuild and redeploy the frontend. Vite
+injects these values at build time.
+
+## Backend and CORS
+
+The backend must allow the origin from which the frontend is served. The
+current backend configuration allows:
+
+- `http://localhost:5173`
+- `https://jobqueuemanager.netlify.app`
+- Any origins supplied through the backend's `FRONTEND_URL` variable
+
+For another deployment URL, set `FRONTEND_URL` in the backend environment and
+redeploy the backend. Do not add a trailing slash to the frontend origin.
+
+## Available Scripts
+
+```bash
+npm run dev       # Start the Vite development server
+npm run build     # Create a production build in dist/
+npm run preview   # Preview the production build locally
+npm run lint      # Run ESLint
+```
+
+## Production Deployment
+
+### Netlify
+
+Configure the site with:
+
+```text
+Base directory: Frontend
+Build command: npm run build
+Publish directory: Frontend/dist
+```
+
+If Netlify uses `Frontend` as its base directory, use `dist` as the publish
+directory instead. Add this environment variable in Netlify before building:
+
+```text
+VITE_API_BASE_URL=https://jobqueue-backend.onrender.com
+```
+
+### SPA Routing
+
+The application uses client-side routing. If a host returns a 404 when a route
+is refreshed directly, configure it to serve `index.html` as the fallback for
+unknown paths.
 
 ## Project Structure
 
 ```text
 src/
-  api/            fetch wrapper + jobs endpoints
-  components/     Navbar, Footer, table, filters, create-job drawer, toasts...
-  hooks/          useJobs (data + mutations), useToasts (notifications)
-  lib/            status rules/labels, date formatting
-  pages/          Dashboard, NotFound
+  api/          API client and job endpoints
+  components/   Reusable dashboard UI components
+  hooks/        Job data and toast state hooks
+  lib/          Formatting and status helpers
+  pages/        Dashboard and not-found pages
 ```
-
-## Setup
-
-```bash
-npm install
-cp .env.example .env   # point this at your backend if it isn't on localhost:3000
-npm run dev
-```
-
-The app runs at `http://localhost:5173` and expects the backend at the URL in `VITE_API_BASE_URL` (defaults to `http://localhost:3000`). Start the backend first — see its own README for `npm run start:dev`.
-
-## What it does
-
-- **List & filter** — jobs load on mount; tabs filter by status and show a live count for each.
-- **Create** — a side panel validates title/type client-side (mirrors the backend's `MaxLength` rules) before submitting.
-- **Change status** — the "Move to…" menu only offers transitions the backend allows, so a completed/failed job never shows "running" as an option. If the API still rejects a transition, the error surfaces as a toast.
-- **Delete** — a two-step inline confirm (no modal) before the row is removed.
-- **Loading / error states** — skeleton rows while fetching, a retry banner if the request fails, and an empty state for a filtered view with zero results.
-
-## Notes
-
-- CORS: if the backend blocks requests from `http://localhost:5173`, enable CORS in `main.ts` (`app.enableCors()`), since the backend README doesn't have it configured by default.
-- Build for production with `npm run build`; output goes to `dist/`.
