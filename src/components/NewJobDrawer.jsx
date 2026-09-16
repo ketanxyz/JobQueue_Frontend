@@ -161,23 +161,22 @@ export default function NewJobDrawer({ open, onClose, onSubmit }) {
             <p className="text-xs text-ink-faint">
               New jobs start as <span className="font-mono">pending</span> automatically.
             </p>
-          </div>
-
-          <div className="flex items-center justify-end gap-2 border-t border-line px-5 py-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-md px-3 py-1.5 text-sm font-medium text-ink-soft hover:bg-line-soft"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={submitting}
-              className="rounded-md bg-accent px-3.5 py-1.5 text-sm font-medium text-white transition-colors hover:bg-accent-hover disabled:opacity-60"
-            >
-              {submitting ? 'Creating…' : 'Create job'}
-            </button>
+            <div className="flex items-center justify-end gap-2 pt-1">
+              <button
+                type="button"
+                onClick={onClose}
+                className="rounded-md px-3 py-1.5 text-sm font-medium text-ink-soft hover:bg-line-soft"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="rounded-md bg-accent px-3.5 py-1.5 text-sm font-medium text-white transition-colors hover:bg-accent-hover disabled:opacity-60"
+              >
+                {submitting ? 'Creating…' : 'Create job'}
+              </button>
+            </div>
           </div>
         </form>
       </div>
