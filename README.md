@@ -2,7 +2,7 @@
 
 The frontend for the Job Queue Manager. It provides a dashboard for viewing,
 filtering, creating, updating, and deleting jobs through the NestJS API in
-[`../backend`](../backend).
+[`../backend`](../backend)
 
 ## Features
 
